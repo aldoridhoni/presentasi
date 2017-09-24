@@ -1,0 +1,388 @@
+\documentclass[14pt]{beamer}
+\hypersetup{pdfstartview={Fit}}
+\usetheme{metropolis}
+\usepackage[utf8]{inputenc}
+\setmonofont{DejaVu Sans Mono}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{diagbox}
+\usepackage{color, colortbl}
+\usepackage{minted}
+\usepackage{upquote}
+\usemintedstyle{friendly}
+\definecolor{bg}{rgb}{0.95,0.95,0.95}
+\setminted[rust]{
+    autogobble,
+    fontsize=\small,
+    framesep=2mm,
+%    bgcolor=bg,
+%    fontfamily=tt,
+    breaklines=true}
+
+%%% Background image in upper right corner.
+\usebackgroundtemplate%
+{%
+    \tikz[overlay,remember picture] %
+    \node[opacity=0.05, yshift=-3cm, at=(current page.45)] {
+        \includegraphics[width=0.4\paperwidth]{rust-logo-512x512-blk}};
+}
+
+%%% Custom Command for highlight
+\newcommand{\hilite}[1] {%
+\texttt{\alert{#1}}}
+
+\begin{document}
+\author{Muhamad Aldo Ridhoni}
+\title{Tipe Data Rust}
+\subtitle{Primitive data types}
+% \logo{}
+\institute{RUST ID Meetup \#2}
+\date{Padepokan ASA Wedomartani, 24 September 2017}
+% \subject{}
+% \setbeamercovered{transparent}
+% \setbeamertemplate{navigation symbols}{}
+{
+\usebackgroundtemplate%
+{%
+    \tikz[overlay,remember picture] %
+    \node[opacity=0.1, xshift=-2.7cm, yshift=2cm, at=(current page.330)] { \includegraphics[width=0.6\paperwidth]{rust-logo-512x512}};}%
+\begin{frame}[plain]
+  \maketitle
+  \addtocounter{framenumber}{-1}
+\end{frame}
+}
+
+\begin{frame}{Membahas}
+  \begin{itemize}[<+->]
+  \item Tipe Data Dasar
+  \item Penggunaan
+  \item Konversi
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Tipe Data Dasar}
+  \textbf{Scalar} \emph{single value} : 
+  \begin{itemize}
+  \item Boolean
+  \item Integer dan floating-point
+  \item Character
+  \end{itemize}
+  \pause
+  \textbf{Compound} \emph{multiple value} :
+  \begin{itemize}
+  \item Tuples
+  \item Arrays
+  \item Slices
+  \item String
+%  \item Pointer
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Boolean}
+Tipe boolean dengan nilai \textbf{true} atau \textbf{false}.
+\end{frame}
+
+\begin{frame}[fragile]{Boolean}
+\begin{minted}{rust}
+        let benar: bool = true;
+        let salah: bool = false;
+        
+        if benar {
+            println!("Berhasil")
+        }
+        
+        assert_eq!(benar as i8, 1);
+        assert_eq!(salah as i8, 0);
+\end{minted}
+\end{frame}
+
+\begin{frame}{Integer}
+Integer adalah tipe data yang merepresentasikan bilangan bulat seperti dalam matematika.\\
+\begin{description}
+    \item[Signed] Cakupan integer bertanda dari $-\left ( 2^{n-1} \right )$ hingga $2^{n-1}-1$.\\
+    \item[Unsigned] Integer tidak bertanda dari \\$0$ hingga $2^{n}-1$.
+\end{description}
+
+\end{frame}
+
+\begin{frame}{Integer}
+\begin{columns}[c]
+    \column{.4\textwidth}
+    {\footnotesize
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \rowcolor{black!20}Panjang & \emph{Signed} & \emph{Unsigned}\\
+        \hline
+        8-bit & i8  & u8\\
+        16-bit & i16 & u16\\ 
+        32-bit & i32 & u32\\
+        64-bit & i64 & i64\\
+        arch & isize & usize\\
+        \hline
+    \end{tabular}
+    }
+    \column{.6\textwidth}
+    {\footnotesize
+    Cakupan
+    \begin{itemize}
+        \item \textbf{i8} = -128 .. 127\\
+        \textbf{u8} = 0 .. 255
+        \item \textbf{i16} = −32.768 .. 32.767\\
+        \textbf{u16} = 0 .. 65.535
+        \item \textbf{i32} = −2.147.483.648 .. 2.147.483.647\\
+        \textbf{u32} = 0 .. 4.294.967.295
+        \item \textbf{i64} = −9.223.372.036.854.775.808 .. 9.223.372.036.854.775.807\\
+        \textbf{u64} = 0 .. 18.446.744.073.709.551.615
+    \end{itemize}
+    }
+\end{columns}
+\end{frame}
+
+\begin{frame}{Integer Literals}
+\centering
+\begin{tabular}{|c|c|}
+    \hline
+    \rowcolor{black!20}Jenis & Contoh\\
+    \hline
+    Desimal & \texttt{45\_678}\\
+    Hexadesimal & \texttt{0xbb}\\ 
+    Oktal & \texttt{0o77}\\
+    Binary & \texttt{0b1100\_1010}\\
+    Byte (u8) & \texttt{b'Z'}\\
+    \hline
+\end{tabular}
+\end{frame}
+\begin{frame}{Floating-Point}
+Floating-point adalah tipe numerik dengan titik desimal.
+\begin{description}
+    \item [f32] 32bit single precision float.\\
+    32bit dengan presisi 24bit.
+    \item [f64] 64bit double precision float.\\
+    64bit dengan presisi 53bit.
+\end{description}
+
+Tipe default untuk float adalah \hilite{f64}.
+\end{frame}
+
+\begin{frame}[fragile]{Floating-Point}
+
+\begin{minted}{rust}
+let f1: f32 = 1.1234567;
+let f2: f32 = 0.00000006;
+let f3: f32 = 1.1234568;
+
+assert_eq!(f1 + f2, f3); // true
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Character}
+Char adalah tipe data yang memuat nilai \hilite{Unicode Scalar}. Satu karakter dimuat dalam petik \hilite{''}.
+\end{frame}
+
+\begin{frame}[fragile]{Character}
+\begin{minted}{rust}
+let c = 'z';
+let z = 'ℤ';
+let black_chess_knight = '♞';
+
+// hanya u8
+let y: char = char::from(0x79);
+let x: char = char::from(b'x');
+\end{minted}
+\end{frame}
+\note{
+    %use std::str::FromStr;
+    %let x = i32::from_str("x");
+}
+
+\begin{frame}[fragile]{Tuple}
+Tuple \hilite{(T, U, ..)} adalah rangkaian yang dapat terdiri dari elemen dengan tipe berbeda dan dimuat dalam tanda kurung \hilite{()}.
+
+Elemen tuple dapat diakses dengan indeks '\textit{tuple indexing}'.
+\end{frame}
+
+\begin{frame}[fragile]{Tuple}
+\begin{minted}{rust}
+type Pair<T1, T2> = (T1, T2);
+let p: Pair<i8, f32> = (10, 3.14);
+let q: Pair<&str, i8> = ("ID", 9);
+let (a, b) = p;
+
+assert_eq!(a, 10);
+assert_eq!(b, 3.14);
+assert_eq!(p.0, 10);
+assert_eq!(p.1, 3.14);
+\end{minted}
+\end{frame}
+
+\begin{frame}{Array}
+Array \hilite{([T; N])} adalah koleksi padat elemen-elemen dengan tipe data yang sama dan memiliki panjang yang tidak bisa berubah setelah dideklarasi.
+
+Sintaks array baru dengan membuat daftar nilai yang terpisah oleh koma didalam kurung siku \hilite{[]}.
+\end{frame}
+
+\begin{frame}[fragile]{Array}
+    \begin{minted}{rust}
+    // dengan tipe annotation
+    let array: [i32; 3] = [1, 2, 3];
+    
+    // repeat expression
+    let mut array: [i32; 3] = [0; 3];
+    
+    let bulan = ["Januari", "Pebruari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "Nopember", "Desember"];
+    let jan = bulan[0];
+    let dec = bulan[11];
+    \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Slice}
+Slice \hilite{(\&[T])} adalah '\textit{view}' untuk koleksi seperti array dengan ukuran yang \emph{dinamis}. Dinamis dalam arti ukuran tidak diketahui saat kompilasi.
+
+Slice menampilkan blok memori dengan representasi sebagai sebuah pointer serta ukuran panjangnya.
+
+\end{frame}
+
+\begin{frame}[fragile]{Slice}
+\begin{minted}{rust}
+let str_slice: &[&str] = &["one", "two"];
+
+let arr = [1, 2, 3, 4, 5, 6];
+let arr_slice: &[i32] = &arr[1..4];
+
+println!("{:?}", arr_slice);  // [2, 3, 4]
+
+assert_eq!(Some(&3), arr_slice.get(1));
+// atau
+assert_eq!(3, arr_slice[1]);
+\end{minted}
+\end{frame}
+
+\begin{frame}{String slices}
+Tipe dasar \hilite{str} untuk menyimpan kalimat \textit{string}.
+
+Nilai dari strings slices selalu valid UTF-8.
+\end{frame}
+
+\begin{frame}[fragile]{String slices}
+\begin{minted}{rust}
+let hello = "Hello, world!";
+
+// dengan tipe annotation
+let hello: &'static str = "Hello, world!";
+\end{minted}
+\end{frame}
+
+%\begin{frame}{Pointer}
+%Tipe dasar pointer adalah penunjuk lokasi memori, ditulis dengan \hilite{*const T} dan \hilite{*mut T}
+%\end{frame}
+%
+%\begin{frame}[fragile]{Pointer}
+%    \begin{minted}{rust}
+%// Mengambil sebuah referensi
+%let my_num: i32 = 10;
+%let my_num_ptr: *const i32 = &my_num;
+%
+%// Referesi mutable
+%let mut my_age: i32 = 26;
+%let my_age_ptr: *mut i32 = &mut my_age;
+%    \end{minted}
+%\end{frame}
+
+\begin{frame}{Tipe-tipe Lain}
+Rust Standard Library menyediakan banyak tipe antara lain:
+\begin{description}
+    \item [Vector] \hilite{Vec<T>}, Tipe Array yang dapat bertambah dan dialokasikan di \textit{heap}.
+    
+    \item [Box] \hilite{Box<T>}, Tipe pointer untuk alokasi data di \textit{heap}.
+    
+    \item [String] Tipe kalimat \textit{string} yang dapat bertambah dengan encoding UTF-8
+    
+\end{description}
+\end{frame}
+
+\begin{frame}{Konversi Antar Tipe (Casting)}
+  \newcolumntype{g}{>{\columncolor{black!20}}m}
+  {\small
+  \begin{tabular}{|g{1.5cm}|c|c|c|c|}
+      \hline
+      \rowcolor{black!20}%
+      \diagbox[innerwidth=1.5cm]{from}{to} & i32 & u32 & f64 & String \\
+      \hline
+       \centering i32 & n/a & x as \ttfamily{u32} & x as \ttfamily{f64} & x.to\_string() \\
+       \centering u32 & x as \ttfamily{i32} & n/a & x as \ttfamily{f64} & x.to\_string() \\
+       \centering f64 & x as \ttfamily{i32} & x as \ttfamily{u32} & n/a & x.to\_string() \\
+       \hline
+  \end{tabular}
+}
+
+    String ke tipe numerik :\\ \mintinline{rust}{x.parse()}
+
+    Secara explicit dengan type annotation  :\\
+    \mintinline{rust}{x.parse::<i32>()}
+\end{frame}
+\begin{frame}{Konversi Antar Tipe String}
+\newcolumntype{g}{>{\columncolor{black!20}}m}
+\centering
+\begin{tabular}{|g{1.5cm}|c|c|c|c|}
+    \hline
+    \rowcolor{black!20}%
+    \diagbox[innerwidth=1.5cm]{from}{to} & String & \&str \\
+    \hline
+    \centering String & n/a & \&*x \\
+    \hline
+    \centering \&str & x.to\_string() & n/a  \\
+    \hline
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Kesimpulan}
+    \begin{itemize}
+        \item Pilih tipe data yang tepat.
+        \item Cobalah kasus dengan \textit{test}.
+        \item Tangani \textit{error}.
+    \end{itemize}
+\end{frame}
+
+{
+    \usebackgroundtemplate%
+    {%
+        \tikz[overlay,remember picture] \node[opacity=0.1, xshift=-2.7cm, yshift=2cm, at=(current page.330)] { \includegraphics[width=0.6\paperwidth]{rust-logo-512x512}};}%
+    \begin{frame}[plain]
+    \Large \textbf{Sekian \& Terima Kasih}
+    
+\end{frame}
+}
+
+\appendix
+\begin{frame}{Referensi}
+
+Pustaka
+
+\href{https://doc.rust-lang.org/std/index.html\#primitives}{\beamergotobutton{https://doc.rust-lang.org/std/index.html\#primitives}}\\
+\href{https://doc.rust-lang.org/reference/types.html}{\beamergotobutton{https://doc.rust-lang.org/reference/types.html}}
+\href{https://doc.rust-lang.org/book/second-edition/ch03-02-data-types.html}{\beamergotobutton{https://doc.rust-lang.org/book/second-edition/ch03-02-data-types.html}}
+\href{http://carols10cents.github.io/rust-conversion-reference}{\beamergotobutton{http://carols10cents.github.io/rust-conversion-reference}}\\
+\href{https://www.manning.com/books/rust-in-action}{\beamergotobutton{https://www.manning.com/books/rust-in-action}}\\
+\href{https://www.doc.ic.ac.uk/~eedwards/compsys/float/}{\beamergotobutton{https://www.doc.ic.ac.uk/\textasciitilde{}eedwards/compsys/float/}}
+
+\end{frame}
+
+\begin{frame}{Referensi}
+Kode
+
+\href{https://github.com/rust-lang/rust/blob/master/src/libcore/num}{\beamergotobutton{https://github.com/rust-lang/rust/blob/master/src/libcore/num}}
+\href{https://github.com/rust-lang/rust/blob/master/src/test/parse-fail/lex-bad-numeric-literals.rs}{\beamergotobutton{https://github.com/rust-lang/rust/blob/master/src/test/parse-fail/lex-bad-numeric-literals.rs}}
+
+Lain-lain
+
+\href{https://en.wikipedia.org/wiki/Integer\_(computer\_science)}{\beamergotobutton{https://en.wikipedia.org/wiki/Integer\_(computer\_science)}}
+\href{https://unicode-table.com/en/\#control-character}{\beamergotobutton{https://unicode-table.com/en/\#control-character}}\\
+\href{https://play.rust-lang.org/}{\beamergotobutton{https://play.rust-lang.org/}}\\
+\href{https://rust.godbolt.org/}{\beamergotobutton{https://rust.godbolt.org/}}
+
+
+
+
+\end{frame}
+
+\end{document}
